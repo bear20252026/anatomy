@@ -41,3 +41,8 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+
+# native packaging
+/release/
+/release-artifacts/
+/android/app/release/

@@ -2,6 +2,7 @@
   "name": "site-creator-vinext-starter",
   "version": "0.1.0",
   "private": true,
+  "main": "electron/main.cjs",
   "engines": {
     "node": ">=22.13.0"
   },
@@ -9,14 +10,18 @@
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext dev",
     "build": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build",
     "build:next": "next build",
+    "build:static": "node scripts/build-static.mjs",
+    "desktop": "electron-builder --win nsis --publish never",
+    "android": "cap sync android",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern out --ignore-pattern android --ignore-pattern electron",
     "db:generate": "drizzle-kit generate",
     "i18n:audit": "tsx scripts/i18n-audit.mjs",
     "i18n:export": "tsx scripts/i18n-export.mjs"
   },
   "dependencies": {
+    "@capacitor/core": "^8.5.2",
     "drizzle-orm": "0.45.2",
     "gsap": "^3.15.0",
     "lucide-react": "^1.28.0",
@@ -26,6 +31,8 @@
     "three": "^0.185.1"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
     "@cloudflare/vite-plugin": "1.37.1",
     "@cloudflare/workers-types": "^4.20260702.1",
     "@tailwindcss/postcss": "4.2.1",
@@ -36,6 +43,8 @@
     "@vitejs/plugin-react": "6.0.2",
     "@vitejs/plugin-rsc": "0.5.26",
     "drizzle-kit": "0.31.10",
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.6",
     "react-server-dom-webpack": "19.2.6",
@@ -45,5 +54,38 @@
     "vite": "8.0.13",
     "wrangler": "4.92.0"
   },
-  "type": "module"
+  "type": "module",
+  "build": {
+    "appId": "com.bear20252026.anatomy",
+    "productName": "Anatomy Atelier",
+    "asar": false,
+    "files": [
+      "out/**/*",
+      "electron/**/*",
+      "package.json",
+      "!node_modules/**"
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "electron-resources"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Anatomy Atelier"
+    }
+  }
 }
